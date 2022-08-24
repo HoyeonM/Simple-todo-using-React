@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.mainTitle{
+  background-color:cornflowerblue;
+  color: white;
+}
+
+.list{
+  color:green;
+}
+.navigation {
+  color: green;
+}
