@@ -4,7 +4,7 @@
 ## Overview
 
 ### `create`
-'''
+```
 function Create(props){
   return <article>
     <h2>Create</h2>
@@ -14,7 +14,7 @@ function Create(props){
       const body = event.target.body.value;
       props.onCreate(title, body);
     }}>
-'''
+```
 '''
 else if(mode === 'CREATE'){ 
     content = <Create onCreate={(_title, _body)=>{
