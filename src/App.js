@@ -36,10 +36,10 @@ function Nav(props){
 function Create(props){
   return <article>
     <h2>Create</h2>
-    <form onSubmit={event=>{
-      event.preventDefault();
-      const title = event.target.title.value;
-      const body = event.target.body.value;
+    <form onSubmit={event=>{ //event happened when submit button is clicked
+      event.preventDefault(); //no need to reload
+      const title = event.target.title.value; //get value from form title, event target is form tag
+      const body = event.target.body.value; //get value from form body, event target is form tag
       props.onCreate(title, body);
     }}>
       <p><input type="text" name="title" placeholder="title"/></p>
@@ -49,7 +49,7 @@ function Create(props){
   </article>
 }
 function Update(props){
-  const [title, setTitle] = useState(props.title); //state is what insider use, can be changed within component
+  const [title, setTitle] = useState(props.title); //change props to state. State is what insider use, so can be changed within component
   const [body, setBody] = useState(props.body);
   return <article>
     <h2>Update</h2>
@@ -59,11 +59,11 @@ function Update(props){
       const body = event.target.body.value;
       props.onUpdate(title, body);
     }}>
-      <p><input type="text" name="title" placeholder="title" value={title} onChange={event=>{ //
-        setTitle(event.target.value); //chage the one we input to new title
+      <p><input type="text" name="title" placeholder="title" value={title} onChange={event=>{ //onChange happen everytime we input
+        setTitle(event.target.value); //chage to new title
       }}/></p>
       <p><textarea name="body" placeholder="body" value={body} onChange={event=>{
-        setBody(event.target.value);
+        setBody(event.target.value); //change to new body
       }}></textarea></p>
       <p><input type="submit" value="Update"></input></p>
     </form>
@@ -73,7 +73,7 @@ function App() {
   let today = new Date();
   const [mode, setMode] = useState('WELCOME');
   const [id, setId] = useState(null); //to print what topic is chosen.
-  const [nextId, setNextId] = useState(4); //manage id seperately
+  const [nextId, setNextId] = useState(0); //manage id seperately
   const [topics, setTopics] = useState([]);
   let content = null;
   let contextControl = null;
@@ -81,8 +81,8 @@ function App() {
     content = <Article title="Welcome" body="create your to-do list"></Article>
   } else if(mode === 'READ'){
     let title, body = null;
-    for(let i=0; i<topics.length; i++){
-      if(topics[i].id === id){
+    for(let i=0; i<topics.length; i++){ //find element of topics which match with id state
+      if(topics[i].id === id){ //
         title = topics[i].title;
         body = topics[i].body;
       }
@@ -107,8 +107,8 @@ function App() {
   } else if(mode === 'CREATE'){
     content = <Create onCreate={(_title, _body)=>{
       const newTopic = {id:nextId, title:_title, body:_body}
-      const newTopics = [...topics] //useState(Object or array) newValue={...value}, change newValue, setValue(newValue) to re-execute component
-      newTopics.push(newTopic);
+      const newTopics = [...topics] //duplicate topics
+      newTopics.push(newTopic); //add new element to duplication of topics!!
       setTopics(newTopics); //react will compare newTopics and topics then ender component if they are different
       setMode('READ'); //check if create worked well
       setId(nextId);
@@ -120,20 +120,19 @@ function App() {
       if(topics[i].id === id){
         title = topics[i].title;
         body = topics[i].body;
-      }
+      } //find original title and body
     }
-    content = <Update title={title} body={body} onUpdate={(title, body)=>{
-      console.log(title, body);
+    content = <Update title={title} body={body} onUpdate={(title, body)=>{//update component now has original title and body
       const newTopics = [...topics] //the one we are about to change is array
-      const updatedTopic = {id:id, title:title, body:body}
+      const updatedTopic = {id:id, title:title, body:body} //edited topic. come from Read
       for(let i=0; i<newTopics.length; i++){
         if(newTopics[i].id === id){
-          newTopics[i] = updatedTopic;
+          newTopics[i] = updatedTopic; //change newTopics to updatedTopic
           break;
         }
       }
-      setTopics(newTopics);
-      setMode('READ');
+      setTopics(newTopics); 
+      setMode('READ'); //display changed content
     }}></Update>
   }
   return (
@@ -150,7 +149,7 @@ function App() {
       <ul className="list">
         <li><a className="navigation" href="/create" onClick={event=>{
           event.preventDefault();
-          setMode('CREATE');
+          setMode('CREATE'); //mode became 'create' and app component re-execute
         }}>Create</a></li>
         {contextControl}
       </ul>

@@ -4,87 +4,123 @@
 ## Overview
 
 ### `create`
-```
+```Javascript
 function Create(props){
   return <article>
     <h2>Create</h2>
+    <form onSubmit={event=>{ //event happened when submit button is clicked
+      event.preventDefault();
+      const title = event.target.title.value;//get value from form title, event target is <form>
+      const body = event.target.body.value;//get value from form title, event target is <form>
+      props.onCreate(title, body); //pass inputs to onCreate function
+    }}>
+}
+```
+```Javascript
+else if(mode === 'CREATE'){
+    content = <Create onCreate={(_title, _body)=>{
+      const newTopic = {id:nextId, title:_title, body:_body}
+      const newTopics = [...topics] //duplicate topics
+      newTopics.push(newTopic); //add new element to duplication of topics!!
+      setTopics(newTopics); //react will compare newTopics and topics then render component if they are different
+      setMode('READ'); //check if 'create' worked well
+      setId(nextId); //the one just created will become next Id
+      setNextId(nextId+1); //getting ready for the next one that will be added
+    }}></Create>
+}
+```
+
+### `read`
+
+```Javascript
+else if(mode === 'READ'){
+    let title, body = null; //their initial value is null because nothing is created at first, but can change
+    for(let i=0; i<topics.length; i++){ //find element of topics which match with id state
+      if(topics[i].id === id){
+        title = topics[i].title;
+        body = topics[i].body;
+      }
+    }
+    content = <Article title={title} body={body}></Article>
+    contextControl = <>
+      <li><a className="navigation" href={'/update/'+id} onClick={event=>{
+    //if read button is clicked, update should appear
+        event.preventDefault();
+        setMode('UPDATE');
+      }}>Update</a></li>
+      <li><input type="button" value="Delete" onClick={()=>{
+        //if read button is clicked, delete should appear
+        const newTopics = [] //this is not 'topics'
+        for(let i=0; i<topics.length; i++){
+          if(topics[i].id !== id){
+            newTopics.push(topics[i]); //push element from topics to new array
+          }
+        }
+        setTopics(newTopics);
+        setMode('WELCOME');
+      }} /></li>
+    </>//empty tag just for grouping
+}
+```
+
+### `update`
+```Javascript
+function Update(props){
+  const [title, setTitle] = useState(props.title); //change props to state. State is what insider use, so can be changed within component
+  const [body, setBody] = useState(props.body);
+  return <article>
+    <h2>Update</h2>
     <form onSubmit={event=>{
       event.preventDefault();
       const title = event.target.title.value;
       const body = event.target.body.value;
-      props.onCreate(title, body);
+      props.onUpdate(title, body); //pass new value to onUpdate
     }}>
+      <p><input type="text" name="title" placeholder="title" value={title} onChange={event=>{ //to have original/onChange happen everytime we input
+        setTitle(event.target.value); //chage to new title
+      }}/></p>
+      <p><textarea name="body" placeholder="body" value={body} onChange={event=>{
+        setBody(event.target.value); //change to new body
+      }}></textarea></p>
+      <p><input type="submit" value="Update"></input></p>
+    </form>
+  </article>
+}
 ```
-'''
-else if(mode === 'CREATE'){ 
-    content = <Create onCreate={(_title, _body)=>{
-      const newTopic = {id:nextId, title:_title, body:_body}
-      const newTopics = [...topics] //useState(Object or array) newValue={...value}, change newValue, setValue(newValue) to re-execute component
-      newTopics.push(newTopic);
-      setTopics(newTopics); //react will compare newTopics and topics then ender component if they are different
-      setMode('READ'); //check if create worked well
-      setId(nextId);
-      setNextId(nextId+1); //getting ready for the next one that will be added
-    }}></Create>
-'''
+```Javascript
+else if(mode === 'UPDATE'){
+    let title, body = null;
+    for(let i=0; i<topics.length; i++){
+      if(topics[i].id === id){
+        title = topics[i].title;
+        body = topics[i].body;
+      }//find original title and body
+    }
+    content = <Update title={title} body={body} onUpdate={(title, body)=>{//this let form display original title and body
+      const newTopics = [...topics] //the one we are about to change is array
+      const updatedTopic = {id:id, title:title, body:body} //edited topic. come from Read
+      for(let i=0; i<newTopics.length; i++){
+        if(newTopics[i].id === id){
+          newTopics[i] = updatedTopic; //change newTopics to updatedTopic
+          break;
+        }
+      }
+      setTopics(newTopics); 
+      setMode('READ'); //display changed content
+    }}></Update>
+}
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### `delete`
+```Javascript
+<li><input type="button" value="Delete" onClick={()=>{
+        const newTopics = [] //this is not 'topics'. new array
+        for(let i=0; i<topics.length; i++){
+          if(topics[i].id !== id){
+            newTopics.push(topics[i]); //find the one user wants to delete than add to new array
+          }
+        }
+        setTopics(newTopics);
+        setMode('WELCOME');
+      }} /></li>
+```
