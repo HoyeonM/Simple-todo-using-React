@@ -1,12 +1,32 @@
-# Getting Started with Create React App
+# Simple TODO web-app using React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
-
-### `npm start`
+### `create`
+'''
+function Create(props){
+  return <article>
+    <h2>Create</h2>
+    <form onSubmit={event=>{
+      event.preventDefault();
+      const title = event.target.title.value;
+      const body = event.target.body.value;
+      props.onCreate(title, body);
+    }}>
+'''
+'''
+else if(mode === 'CREATE'){ 
+    content = <Create onCreate={(_title, _body)=>{
+      const newTopic = {id:nextId, title:_title, body:_body}
+      const newTopics = [...topics] //useState(Object or array) newValue={...value}, change newValue, setValue(newValue) to re-execute component
+      newTopics.push(newTopic);
+      setTopics(newTopics); //react will compare newTopics and topics then ender component if they are different
+      setMode('READ'); //check if create worked well
+      setId(nextId);
+      setNextId(nextId+1); //getting ready for the next one that will be added
+    }}></Create>
+'''
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
