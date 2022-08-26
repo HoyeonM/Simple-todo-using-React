@@ -6,6 +6,7 @@
 
 
 ### `create`
+#### you can create todo list . fill out title and description then click submit button
 ```Javascript
 function Create(props){
   return <article>
@@ -33,6 +34,7 @@ else if(mode === 'CREATE'){
 ```
 
 ### `read`
+#### if you click one of your todos, title and description are shown. you can update and delete that todo.
 
 ```Javascript
 else if(mode === 'READ'){
@@ -66,6 +68,7 @@ else if(mode === 'READ'){
 ```
 
 ### `update`
+#### by clicking update button, you can modify your todo.
 ```Javascript
 function Update(props){
   const [title, setTitle] = useState(props.title); //change props to state. State is what insider use, so can be changed within component
@@ -114,6 +117,7 @@ else if(mode === 'UPDATE'){
 ```
 
 ### `delete`
+#### you can delete your todo
 ```Javascript
 <li><input type="button" value="Delete" onClick={()=>{
         const newTopics = [] //this is not 'topics'. new array
